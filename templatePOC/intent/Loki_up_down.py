@@ -131,6 +131,30 @@ def getResult(inputSTR, utterance, args, resultDICT, refDICT, pattern="", toolki
             else:
                 pass
 
+    if utterance == "新台幣匯率10:00升[4.3]分達[30.685元]":
+        if CHATBOT:
+            replySTR = getReply(utterance, args)
+            if replySTR:
+                resultDICT["response"] = replySTR
+                resultDICT["source"] = "reply"
+        else:
+            resultDICT["usd_up_down"] = "down"
+            resultDICT["up_down_num"] = float(args[0])/100
+            resultDICT["ntd_price"] = args[1].strip("元")
+            resultDICT["intent"] = "ntd_10am"
+
+    if utterance == "新台幣匯率10:00貶[4.3]分達[30.685元]":
+        if CHATBOT:
+            replySTR = getReply(utterance, args)
+            if replySTR:
+                resultDICT["response"] = replySTR
+                resultDICT["source"] = "reply"
+        else:
+            resultDICT["usd_up_down"] = "up"
+            resultDICT["up_down_num"] = float(args[0])/100
+            resultDICT["ntd_price"] = args[1].strip("元")
+            resultDICT["intent"] = "ntd_10am"
+            
     return resultDICT
 
 
