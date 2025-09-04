@@ -26,13 +26,11 @@ def getTemplateTopic(titleSTR):
 
     return intentSTR
 
+def main():
 
-
-if __name__ == "__main__":
-
-    inputurl = input("Please enter the CNA news URL: ")
-    titleSTR, contentSTR = get_cna_article_text(inputurl)
-    print(contentSTR)
+    inputURL = input("Please enter the CNA news URL: ")
+    titleSTR, contentSTR = get_cna_article_text(inputURL)
+    #print(contentSTR)
 
     topicSTR = getTemplateTopic(titleSTR)
     print(f"Identified topic: {topicSTR}")
@@ -69,6 +67,9 @@ if __name__ == "__main__":
         # 根據不同主題填入對應的新聞稿模板
         # 台股開盤
         if topicSTR == "stock_open":
+            resultDICT = askLoki(contentSTR, filter=filterLIST, splitLIST=splitLIST, refDICT=refDICT)
+            # pprint(resultDICT)
+
             if resultDICT["taiex_up_down"][0] == "up":
                 hi_low = "higher"
             else:
@@ -81,6 +82,8 @@ if __name__ == "__main__":
         
         # 台股收盤
         elif topicSTR == "stock_close":
+            resultDICT = askLoki(contentSTR.split("\n\n")[0], filter=filterLIST, splitLIST=splitLIST, refDICT=refDICT)
+            # pprint(resultDICT)
             hi_low = resultDICT["taiex_up_down"][0] # "up" or "down"
             turnover_num = number_to_ap(float(resultDICT["turnover"][0])) 
             usd_turnover_num = twd2usd(float(resultDICT["turnover"][0]))
@@ -89,7 +92,8 @@ if __name__ == "__main__":
         
         # 台幣收盤
         elif topicSTR == "ntd_close":
-
+            resultDICT = askLoki(contentSTR, filter=filterLIST, splitLIST=splitLIST, refDICT=refDICT)
+            # pprint(resultDICT)
             if resultDICT["usd_up_down"][0] == "rose":
                 tmpSTR = "shedding"
                 hi_low = "lower"
@@ -101,4 +105,7 @@ if __name__ == "__main__":
             # 根據 resultDICT 產生回覆內容
             templateSTR = f"U.S. dollar closes {hi_low} on Taipei forex market\n\n(Taipei, {date}) The U.S. dollar {resultDICT["usd_up_down"][0]} against the Taiwan dollar {weekday}, {tmpSTR} NT${resultDICT["up_down_num"][0]} to close at NT${resultDICT["close"][0]}.\n\nTurnover totaled US${turnover_num} during the trading session.\n\nThe greenback opened at NT${resultDICT["open"][0]}, and moved between NT${resultDICT["range"][0][0]} and NT${resultDICT["range"][0][1]} before the close.\n\n(By xxx)\nEnditem"
 
-        print(templateSTR)
+        return templateSTR
+
+if __name__ == "__main__":
+    print(main())

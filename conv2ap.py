@@ -1,3 +1,5 @@
+import math
+
 def month_to_ap(month: str) -> str:
     """
     Convert a month name to its AP Style abbreviation.
@@ -18,21 +20,28 @@ def month_to_ap(month: str) -> str:
     }
     return month_abbr.get(month, month)
 
-def number_to_ap(num: int) -> str:
+def number_to_ap(num: float) -> str:
     """
     Convert a number into AP Style formatting.
-    Handles millions, billions, trillions.
+    Handles thousands, millions, billions, trillions.
+    Preserves decimals instead of rounding up.
     """
-    if num < 1_000:  # 1–999
-        return str(num)
+    if num < 1_000:
+        return str(int(num)) if num.is_integer() else str(num)
     elif num < 1_000_000:  # thousands
-        return f"{num:,}"  # keep as comma-separated
+        return f"{num:,.0f}"
     elif num < 1_000_000_000:  # millions
-        return f"{num / 1_000_000:.2f}".rstrip("0").rstrip(".") + " million"
+        val = num / 1_000_000
+        val = math.floor(val * 100) / 100  # truncate to 2 decimals
+        return f"{val}".rstrip("0").rstrip(".") + " million"
     elif num < 1_000_000_000_000:  # billions
-        return f"{num / 1_000_000_000:.2f}".rstrip("0").rstrip(".") + " billion"
+        val = num / 1_000_000_000
+        val = math.floor(val * 100) / 100
+        return f"{val}".rstrip("0").rstrip(".") + " billion"
     else:  # trillions
-        return f"{num / 1_000_000_000_000:.2f}".rstrip("0").rstrip(".") + " trillion"
+        val = num / 1_000_000_000_000
+        val = math.floor(val * 100) / 100
+        return f"{val}".rstrip("0").rstrip(".") + " trillion"
 
 if __name__ == "__main__":
     test_numbers = [500, 1500, 2500000, 4300000000, 7200000000000]
