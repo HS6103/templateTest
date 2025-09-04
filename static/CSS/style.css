@@ -1,0 +1,52 @@
+#name {
+	display: block;
+	margin: auto;
+	text-align: center;
+	padding-top: 5%;
+	font-size: 50px;
+}
+
+#input {
+	display: block;
+	margin-top: 15px;
+	text-align: center;
+}
+
+#result_label {
+	display: block;
+	margin-top: 30px;
+	text-align: center;
+}
+
+#result {
+	display: block;
+	margin-top: 5px;
+	text-align: center;
+}
+
+#bottom_text {
+	position: fixed;
+	left: 50%;
+	bottom: 5px;
+	transform: translate(-50%, -50%);
+	margin: 0 auto;
+}
+
+.button {
+	border: 1px solid #d3d3d3;
+	background: #f3f3f3;
+	color: #696969;
+	margin-left: 4px;
+	margin-right: 4px;
+	margin-top: 25px;
+	font-family: arial, sans-serif;
+	font-size: 12px;
+	font-weight: bold;
+	padding: 7px;
+	border-radius: 2px;
+}
+
+.button:hover {
+	color: #2a2a2a;
+	border: 1px solid #bdbdbd;
+}

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" , content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="../static/CSS/style.css">
+  <link rel="apple-touch-icon" sizes="180x180" href="../static/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="../static/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="../static/favicon-16x16.png">
+  <link rel="manifest" href="../static/site.webmanifest">
+  <title>模板新聞測試</title>
+</head>
+
+<body>
+  <div id="main">
+    <div id="name">
+      <span id="title">模板新聞測試</span>
+    </div>
+    <form id="input" , method="post">
+      <br>
+      <label for="user_input">輸入中文稿(帶標題)</label>
+      <input type="text" id="user_input" name="user_input" required>
+      <br>
+      <br>
+      <a href=# id=process_input><button class='btn btn-default'>Submit</button></a>
+    </form>
+    <div id="result_label">
+      <span>英文稿:</span>
+    </div>
+    <div id="result"></div>
+    <div id="bottom_text">
+      <span id="credit">By <a href="https://github.com/HS6103">Simon HS.</a> @2025</span>
+    </div>
+  </div>
+
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script type=text/javascript>
+        $(function() {
+          $('a#process_input').bind('click', function() {
+            $.post('/', {  
+              user_input: $('#user_input').val(),
+            }, function(data) {
+              $('#result').text(data.result);
+            });
+            return false;
+          });
+        });
+    </script>
+</body>
+
+</html>
