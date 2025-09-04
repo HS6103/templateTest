@@ -97,6 +97,18 @@ def getResult(inputSTR, utterance, args, resultDICT, refDICT, pattern="", toolki
                 resultDICT["source"] = "reply"
         else:
             resultDICT["open"] = args[0].strip("元")
+
+    if utterance == "[新台幣]開盤":
+        if CHATBOT:
+            replySTR = getReply(utterance, args)
+            if replySTR:
+                resultDICT["response"] = replySTR
+                resultDICT["source"] = "reply"
+        else:
+            if args[0] == "新台幣":
+                resultDICT["intent"] = "ntd_open"
+            else:
+                resultDICT["intent"] = "stock_open"
             
     return resultDICT
 

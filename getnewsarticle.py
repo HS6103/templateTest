@@ -28,15 +28,11 @@ def get_cna_article_text(url):
         full_text = re.sub(r'（.*?）[0-9]+\n\n本網站之文字、圖片及影音，非經授權，不得轉載、公開播送或公開傳輸及利用。', '', body)  # 移除括號內的文字
 
 
-        # 合併標題與全文
-        article_text = f"{title}\n\n{full_text}"
-
-
     except Exception as e:
         print(f"[ERROR] Failed to fetch article from {url}: {str(e)}")
         return ""
     
-    return article_text
+    return title, full_text
 
 if __name__ == "__main__":
     # 測試網址

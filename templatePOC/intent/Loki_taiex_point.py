@@ -2,7 +2,7 @@
 # -*- coding:utf-8 -*-
 
 """
-    Loki module for turnover
+    Loki module for taiex_point
 
     Input:
         inputSTR      str,
@@ -15,13 +15,14 @@
     Output:
         resultDICT    dict
 """
+
 from importlib.util import module_from_spec
 from importlib.util import spec_from_file_location
 from random import sample
 import json
 import os
 
-INTENT_NAME = "turnover"
+INTENT_NAME = "taiex_point"
 CWD_PATH = os.path.dirname(os.path.abspath(__file__))
 
 def import_from_path(module_name, file_path):
@@ -88,30 +89,20 @@ def getReply(utterance, args):
 getResponse = getReply
 def getResult(inputSTR, utterance, args, resultDICT, refDICT, pattern="", toolkitDICT={}):
     debugInfo(inputSTR, utterance)
-    if utterance == "成交金額[7.67億美元]":
+    if utterance == "加權股價指數為[24235.27]點":
         if CHATBOT:
             replySTR = getReply(utterance, args)
             if replySTR:
                 resultDICT["response"] = replySTR
                 resultDICT["source"] = "reply"
         else:
-            turnoverNum = ARTICUT.parse(args[0], level= "lv3")["number"][args[0]]
-            resultDICT["turnover"] = turnoverNum
+            resultDICT["taiex_point"] = args[0]
 
-    if utterance == "成交金額新台幣[81.12億元]":
-        if CHATBOT:
-            replySTR = getReply(utterance, args)
-            if replySTR:
-                resultDICT["response"] = replySTR
-                resultDICT["source"] = "reply"
-        else:
-            turnoverNum = ARTICUT.parse(args[0], level= "lv3")["number"][args[0]]
-            resultDICT["turnover"] = turnoverNum
     return resultDICT
 
 
 if __name__ == "__main__":
     from pprint import pprint
 
-    resultDICT = getResult("成交金額7.67億美元", "成交金額[7.67億美元]", [], {}, {})
+    resultDICT = getResult("加權股價指數為24235.27點", "加權股價指數為[24235.27]點", [], {}, {})
     pprint(resultDICT)
