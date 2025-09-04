@@ -119,6 +119,18 @@ def getResult(inputSTR, utterance, args, resultDICT, refDICT, pattern="", toolki
             resultDICT["taiex_up_down"] = "down"
             resultDICT["up_down_num"] = args[0]
 
+    if utterance == "[跌幅][0.67%]":
+        if CHATBOT:
+            replySTR = getReply(utterance, args)
+            if replySTR:
+                resultDICT["response"] = replySTR
+                resultDICT["source"] = "reply"
+        else:
+            if args[0] in ["漲幅","跌幅"]:
+                resultDICT["taiex_up_down_perc"] = args[1]
+            else:
+                pass
+
     return resultDICT
 
 

@@ -98,6 +98,15 @@ def getResult(inputSTR, utterance, args, resultDICT, refDICT, pattern="", toolki
         else:
             resultDICT["taiex_point"] = args[0]
 
+    if utterance == "為[24071.73]點":
+        if CHATBOT:
+            replySTR = getReply(utterance, args)
+            if replySTR:
+                resultDICT["response"] = replySTR
+                resultDICT["source"] = "reply"
+        else:
+            resultDICT["stock_point"] = args[0]
+
     return resultDICT
 
 
