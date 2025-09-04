@@ -102,6 +102,7 @@ def main():
                     usd_turnover_AP = number_to_ap(int(usd_turnover_num))
                     templateSTR = f"Taiwan shares close {hi_low} {resultDICT["taiex_up_down_perc"][0]} \n\n(Taipei, {date}) (CNA) Taiwan shares ended {hi_low} {resultDICT["up_down_num"][0]} points, or {resultDICT["taiex_up_down_perc"][0].replace("%"," percent")}, at {resultDICT["stock_point"][0]} {weekday} on turnover of NT${turnover_num} (US${usd_turnover_AP}). \n\n(By xxx)\nEnditem"
                 
+                # 台幣10點
                 elif topicSTR == "ntd_10am":
                     resultDICT = askLoki(contentSTR, filter=filterLIST, splitLIST=splitLIST, refDICT=refDICT)
                     delta = resultDICT["up_down_num"][0]

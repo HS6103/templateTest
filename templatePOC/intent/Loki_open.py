@@ -109,6 +109,18 @@ def getResult(inputSTR, utterance, args, resultDICT, refDICT, pattern="", toolki
                 resultDICT["intent"] = "ntd_open"
             else:
                 resultDICT["intent"] = "stock_open"
+    
+    if utterance == "新台幣匯率開盤升[3.2]分達[30.710元]":
+        if CHATBOT:
+            replySTR = getReply(utterance, args)
+            if replySTR:
+                resultDICT["response"] = replySTR
+                resultDICT["source"] = "reply"
+        else:
+            resultDICT["intent"] = "ntd_open"
+            resultDICT["usd_up_down"] = args[0]
+            resultDICT["up_down_num"] = args[0]
+            resultDICT["open"] = args[1].strip("元")
             
     return resultDICT
 
