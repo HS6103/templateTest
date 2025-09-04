@@ -1,4 +1,22 @@
-
+def month_to_ap(month: str) -> str:
+    """
+    Convert a month name to its AP Style abbreviation.
+    """
+    month_abbr = {
+        "January": "Jan.",
+        "February": "Feb.",
+        "March": "March",
+        "April": "April",
+        "May": "May",
+        "June": "June",
+        "July": "July",
+        "August": "Aug.",
+        "September": "Sept.",
+        "October": "Oct.",
+        "November": "Nov.",
+        "December": "Dec."
+    }
+    return month_abbr.get(month, month)
 
 def number_to_ap(num: int) -> str:
     """

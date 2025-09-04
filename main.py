@@ -2,7 +2,7 @@ from datetime import datetime
 from pprint import pprint
 from getnewsarticle import get_cna_article_text
 from tw2us import twd2usd
-from num2ap import number_to_ap
+from conv2ap import number_to_ap, month_to_ap
 from templatePOC.main import askLoki
 
 def getTemplateTopic(titleSTR):
@@ -57,8 +57,11 @@ if __name__ == "__main__":
     pprint(resultDICT)
 
     if resultDICT:
+        today = datetime.today()
         weekday = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"][datetime.now().weekday()]
-        date = datetime.today().strftime('%B %d')
+        month = month_to_ap(datetime.now().strftime('%B'))
+        day = today.strftime("%d").lstrip("0")  # remove leading zero
+        date = f"{month} {day}"
 
         if topicSTR == "stock_open":
             if resultDICT["taiex_up_down"][0] == "up":
