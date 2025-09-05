@@ -107,6 +107,17 @@ def getResult(inputSTR, utterance, args, resultDICT, refDICT, pattern="", toolki
         else:
             turnoverNum = ARTICUT.parse(args[0], level= "lv3")["number"][args[0]]
             resultDICT["turnover"] = turnoverNum
+
+    if utterance == "成交[4163.99億元]":
+        if CHATBOT:
+            replySTR = getReply(utterance, args)
+            if replySTR:
+                resultDICT["response"] = replySTR
+                resultDICT["source"] = "reply"
+        else:
+            turnoverNum = ARTICUT.parse(args[0], level= "lv3")["number"][args[0]]
+            resultDICT["turnover"] = turnoverNum
+            
     return resultDICT
 
 

@@ -154,6 +154,23 @@ def getResult(inputSTR, utterance, args, resultDICT, refDICT, pattern="", toolki
             resultDICT["up_down_num"] = float(args[0])/100
             resultDICT["ntd_price"] = args[1].strip("元")
             resultDICT["intent"] = "ntd_10am"
+
+    if utterance == "[+][314.73]點 或[+][1.30%]":
+        if CHATBOT:
+            replySTR = getReply(utterance, args)
+            if replySTR:
+                resultDICT["response"] = replySTR
+                resultDICT["source"] = "reply"
+        else:
+            if args[0] == "+":
+                resultDICT["taiex_up_down"] = "up"
+            elif args[0] == "-":
+                resultDICT["taiex_up_down"] = "down"
+            resultDICT["taiex_point"] = args[1]
+            if "%" in args[2]:
+                resultDICT["taiex_up_down_perc"] = args[2]
+            else:
+                pass
             
     return resultDICT
 
