@@ -12,6 +12,16 @@
 	text-align: center;
 }
 
+#user_input {
+	width: 30%;
+	height: 30px;
+	font-size: 16px;
+	padding: 5px;
+	border: 1px solid #d3d3d3;
+	border-radius: 2px;
+	margin-top: 1%;
+}
+
 #result_label {
 	display: block;
 	margin-top: 30px;
@@ -22,6 +32,7 @@
 	display: block;
 	margin-top: 5px;
 	text-align: center;
+	white-space: pre-line;
 }
 
 #bottom_text {

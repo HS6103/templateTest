@@ -3,7 +3,7 @@ from pprint import pprint
 from getnewsarticle import get_cna_article_text
 from tw2us import twd2usd
 from conv2ap import number_to_ap, month_to_ap
-from templatePOC.main import askLoki
+from templateLOKI.main import askLoki
 
 def getTemplateTopic(titleSTR):
     try:
@@ -29,9 +29,9 @@ def getTemplateTopic(titleSTR):
 
     return intentSTR
 
-def main():
+def main(inputURL=None):
     try:
-        inputURL = input("Please enter the CNA news: ")
+        
         if not inputURL.startswith("https://www.cna.com.tw/"):
             titleSTR, contentSTR = inputURL, inputURL
         else:
@@ -129,10 +129,16 @@ def main():
                     # 根據 resultDICT 產生回覆內容
                     templateSTR = f"U.S. dollar closes {hi_low} on Taipei forex market\n\n(Taipei, {date}) The U.S. dollar {resultDICT["usd_up_down"][0]} against the Taiwan dollar {weekday}, {tmpSTR} NT${resultDICT["up_down_num"][0]} to close at NT${resultDICT["close"][0]}.\n\nTurnover totaled US${turnover_num} during the trading session.\n\nThe greenback opened at NT${resultDICT["open"][0]}, and moved between NT${resultDICT["range"][0][0]} and NT${resultDICT["range"][0][1]} before the close.\n\n(By xxx)\nEnditem"
     
+    except ValueError:
+        templateSTR = "目前只支援「台幣收盤」、「台幣10點」、「台股開盤」及「台股收盤」的新聞稿產生，請提供相關新聞連結或標題。"
+        print("ValueError: Could not determine the topic from the title.")
+
     except Exception as e:
-        templateSTR = f"Error: {str(e)}"
-    
+        templateSTR = "Error: 無法產生新聞稿，請確認輸入內容是否正確。"
+        print(f"Error: {e}")    
+
     return templateSTR
 
 if __name__ == "__main__":
-    print(main())
+    inputURL = input("Please enter the CNA news: ")
+    print(main(inputURL))
