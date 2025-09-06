@@ -135,12 +135,13 @@ def main(inputURL=None):
                     templateSTR = f"U.S. dollar closes {hi_low} on Taipei forex market\n\n(Taipei, {date}) The U.S. dollar {resultDICT["usd_up_down"][0]} against the Taiwan dollar {weekday}, {tmpSTR} NT${resultDICT["up_down_num"][0]} to close at NT${close}.\n\nTurnover totaled US${turnover_num} during the trading session.\n\nThe greenback opened at the day's high NT${hi} and moved to a low of {low} before the close.\n\n(By xxx)\nEnditem"
                 else:
                     templateSTR = f"U.S. dollar closes {hi_low} on Taipei forex market\n\n(Taipei, {date}) The U.S. dollar {resultDICT["usd_up_down"][0]} against the Taiwan dollar {weekday}, {tmpSTR} NT${resultDICT["up_down_num"][0]} to close at NT${close}.\n\nTurnover totaled US${turnover_num} during the trading session.\n\nThe greenback opened at NT${resultDICT["open"][0]}, and moved between NT${resultDICT["range"][0][0]} and NT${resultDICT["range"][0][1]} before the close.\n\n(By xxx)\nEnditem"
-    
+            templateSTR += f"\n\n\n原稿：\n{contentSTR}"
+
     except ValueError:
         templateSTR = "目前只支援「台幣收盤」、「台幣10點」、「台股開盤」及「台股收盤」的新聞稿產生，請提供相關新聞連結或標題。"
         print("ValueError: Could not determine the topic from the title.")
 
-    except Exception as e:
+    except Exception:
         templateSTR = "無法產生新聞稿，請確認輸入內容是否正確。"
         print(traceback.format_exc())    
 
