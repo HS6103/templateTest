@@ -106,6 +106,16 @@ def getResult(inputSTR, utterance, args, resultDICT, refDICT, pattern="", toolki
                 resultDICT["response"] = replySTR
                 resultDICT["source"] = "reply"
         else:
+            resultDICT["up_down_num"] = args[0]
+            resultDICT["intent"] = "stock_close"
+
+    if utterance == "台股收[24494.58]點":
+        if CHATBOT:
+            replySTR = getReply(utterance, args)
+            if replySTR:
+                resultDICT["response"] = replySTR
+                resultDICT["source"] = "reply"
+        else:
             resultDICT["close"] = args[0]
             resultDICT["intent"] = "stock_close"
 

@@ -105,7 +105,7 @@ def getResult(inputSTR, utterance, args, resultDICT, refDICT, pattern="", toolki
                 resultDICT["response"] = replySTR
                 resultDICT["source"] = "reply"
         else:
-            resultDICT["stock_point"] = args[0]
+            resultDICT["close"] = args[0]
 
     return resultDICT
 

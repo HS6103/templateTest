@@ -162,13 +162,15 @@ def getResult(inputSTR, utterance, args, resultDICT, refDICT, pattern="", toolki
                 resultDICT["response"] = replySTR
                 resultDICT["source"] = "reply"
         else:
+            resultDICT["up_down_num"] = args[1]
+            
             if args[0] == "+":
                 resultDICT["taiex_up_down"] = "up"
             elif args[0] == "-":
                 resultDICT["taiex_up_down"] = "down"
-            resultDICT["taiex_point"] = args[1]
-            if "%" in args[2]:
-                resultDICT["taiex_up_down_perc"] = args[2]
+
+            if "%" in args[3]:
+                resultDICT["taiex_up_down_perc"] = args[3].replace("%"," percent").strip()
             else:
                 pass
             
