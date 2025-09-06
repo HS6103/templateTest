@@ -141,7 +141,7 @@ def main(inputURL=None):
         print("ValueError: Could not determine the topic from the title.")
 
     except Exception as e:
-        templateSTR = "Error: 無法產生新聞稿，請確認輸入內容是否正確。"
+        templateSTR = "無法產生新聞稿，請確認輸入內容是否正確。"
         print(traceback.format_exc())    
 
     return templateSTR
