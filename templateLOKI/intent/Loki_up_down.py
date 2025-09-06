@@ -97,7 +97,17 @@ def getResult(inputSTR, utterance, args, resultDICT, refDICT, pattern="", toolki
                 resultDICT["source"] = "reply"
         else:
             resultDICT["usd_up_down"] = "rose"
-            resultDICT["up_down_num"] = float(args[0])/100
+            resultDICT["up_down_num"] = f"{float(args[0])/100:.3f}"
+
+    if utterance == "升[2.5]分":
+        if CHATBOT:
+            replySTR = getReply(utterance, args)
+            if replySTR:
+                resultDICT["response"] = replySTR
+                resultDICT["source"] = "reply"
+        else:
+            resultDICT["usd_up_down"] = "fell"
+            resultDICT["up_down_num"] = f"{float(args[0])/100:.3f}"
 
     if utterance == "漲[134.97]點":
         if CHATBOT:

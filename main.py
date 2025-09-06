@@ -1,3 +1,4 @@
+import traceback
 from datetime import datetime
 from pprint import pprint
 from getnewsarticle import get_cna_article_text
@@ -115,11 +116,12 @@ def main(inputURL=None):
             elif topicSTR == "ntd_close":
                 # pprint(resultDICT)
                 if resultDICT["usd_up_down"][0] == "rose":
-                    tmpSTR = "shedding"
-                    hi_low = "lower"
-                else:
                     tmpSTR = "gaining"
                     hi_low = "higher"
+                else:
+                    tmpSTR = "shedding"
+                    hi_low = "lower"
+
 
                 turnover_num = number_to_ap(float(resultDICT["turnover"][0])) 
                 # 根據 resultDICT 產生回覆內容
@@ -131,7 +133,7 @@ def main(inputURL=None):
 
     except Exception as e:
         templateSTR = "Error: 無法產生新聞稿，請確認輸入內容是否正確。"
-        print(f"Error: {e.with_traceback(e.__traceback__)}")    
+        print(traceback.format_exc())    
 
     return templateSTR
 
