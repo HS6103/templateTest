@@ -3,7 +3,7 @@
 
 import os
 from flask import Flask, request, render_template, jsonify
-from main import main as template_main
+from func import main as template_main
 
 app = Flask(__name__)
 
