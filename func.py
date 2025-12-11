@@ -34,10 +34,7 @@ def main(inputURL=None):
     try:
         contentSTR = ""
         templateSTR = ""
-        if not inputURL.startswith("https://www.cna.com.tw/"):
-            contentSTR = inputURL
-        else:
-            contentSTR = get_cna_article_text(inputURL)
+        contentSTR = inputURL
         print(contentSTR)
 
         # topicSTR = getTemplateTopic(titleSTR)
