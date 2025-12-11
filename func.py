@@ -88,7 +88,7 @@ def main(inputURL=None):
                 turnover_num = number_to_ap(float(resultDICT["turnover"][0])) 
                 usd_turnover_num = twd2usd(float(resultDICT["turnover"][0]))
                 usd_turnover_AP = number_to_ap(int(usd_turnover_num))
-                templateSTR = f"Taiwan shares open {hi_low}\n\n(Taipei, {date}) (CNA) The Taiwan Stock Exchange's main index opened {resultDICT["taiex_up_down"][0]} {resultDICT["up_down_num"][0]} points at {resultDICT["taiex_point"][0]} {weekday} on turnover of NT${turnover_num} (US${usd_turnover_AP}). \n\n(By xxx)\nEnditem"
+                templateSTR = f"Taiwan shares open {hi_low}\n\nTaipei, {date} (CNA) The Taiwan Stock Exchange's main index opened {resultDICT["taiex_up_down"][0]} {resultDICT["up_down_num"][0]} points at {resultDICT["taiex_point"][0]} {weekday} on turnover of NT${turnover_num} (US${usd_turnover_AP}). \n\n(By xxx)\nEnditem"
             
             # 台股收盤
             elif topicSTR == "stock_close":
@@ -97,7 +97,7 @@ def main(inputURL=None):
                 turnover_num = number_to_ap(float(resultDICT["turnover"][0])) 
                 usd_turnover_num = twd2usd(float(resultDICT["turnover"][0]))
                 usd_turnover_AP = number_to_ap(int(usd_turnover_num))
-                templateSTR = f"Taiwan shares close {hi_low} {resultDICT["taiex_up_down_perc"][0]} \n\n(Taipei, {date}) (CNA) Taiwan shares ended {hi_low} {resultDICT["up_down_num"][0]} points, or {resultDICT["taiex_up_down_perc"][0]}, at {resultDICT["close"][0]} {weekday} on turnover of NT${turnover_num} (US${usd_turnover_AP}). \n\n(By xxx)\nEnditem"
+                templateSTR = f"Taiwan shares close {hi_low} {resultDICT["taiex_up_down_perc"][0]} \n\nTaipei, {date} (CNA) Taiwan shares ended {hi_low} {resultDICT["up_down_num"][0]} points, or {resultDICT["taiex_up_down_perc"][0]}, at {resultDICT["close"][0]} {weekday} on turnover of NT${turnover_num} (US${usd_turnover_AP}). \n\n(By xxx)\nEnditem"
             
             # 台幣10點
             elif topicSTR == "ntd_10am":
@@ -105,9 +105,9 @@ def main(inputURL=None):
                 ntd_price = resultDICT["ntd_price"][0]
                 hi_low = resultDICT["usd_up_down"][0] # "up" or "down"
                 if hi_low == "up":
-                    templateSTR = f"U.S. dollar higher in Taipei trading\n\n(Taipei, {date}) (CNA) The U.S. dollar was traded at NT${ntd_price} at 10 a.m. {weekday} on the Taipei Foreign Exchange, up NT${delta:.3f} from the previous close. \n\n(By xxx)\nEnditem"
+                    templateSTR = f"U.S. dollar higher in Taipei trading\n\nTaipei, {date} (CNA) The U.S. dollar was traded at NT${ntd_price} at 10 a.m. {weekday} on the Taipei Foreign Exchange, up NT${delta:.3f} from the previous close. \n\n(By xxx)\nEnditem"
                 else:
-                    templateSTR = f"U.S. dollar lower in Taipei trading\n\n(Taipei, {date}) (CNA) The U.S. dollar was traded at NT${ntd_price} at 10 a.m. {weekday} on the Taipei Foreign Exchange, down NT${delta:.3f} from the previous close. \n\n(By xxx)\nEnditem"
+                    templateSTR = f"U.S. dollar lower in Taipei trading\n\nTaipei, {date} (CNA) The U.S. dollar was traded at NT${ntd_price} at 10 a.m. {weekday} on the Taipei Foreign Exchange, down NT${delta:.3f} from the previous close. \n\n(By xxx)\nEnditem"
 
             # 台幣收盤
             elif topicSTR == "ntd_close":
@@ -127,14 +127,14 @@ def main(inputURL=None):
                 
                 # 根據 resultDICT 產生回覆內容
                 if open == low:
-                    templateSTR = f"U.S. dollar closes {hi_low} on Taipei forex market\n(Taipei, {date}) The U.S. dollar {resultDICT["usd_up_down"][0]} against the Taiwan dollar {weekday}, {tmpSTR} NT${resultDICT["up_down_num"][0]} to close at NT${close}.\n\nTurnover totaled US${turnover_num} during the trading session.\n\nThe greenback opened at the day's low NT${low} and moved to a high of {hi} before the close.\n\n(By xxx)\nEnditem"
+                    templateSTR = f"U.S. dollar closes {hi_low} on Taipei forex market\nTaipei, {date} The U.S. dollar {resultDICT["usd_up_down"][0]} against the Taiwan dollar {weekday}, {tmpSTR} NT${resultDICT["up_down_num"][0]} to close at NT${close}.\n\nTurnover totaled US${turnover_num} during the trading session.\n\nThe greenback opened at the day's low NT${low} and moved to a high of {hi} before the close.\n\n(By xxx)\nEnditem"
                 elif open == hi:
                     if close == low:
-                        templateSTR = f"U.S. dollar closes {hi_low} on Taipei forex market\n(Taipei, {date}) The U.S. dollar {resultDICT["usd_up_down"][0]} against the Taiwan dollar {weekday}, {tmpSTR} NT${resultDICT["up_down_num"][0]} to close at NT${close}.\n\nTurnover totaled US${turnover_num} during the trading session.\n\nThe greenback opened at the day's high NT${hi} and moved to a low of {low} before the close.\n\n(By xxx)\nEnditem"
+                        templateSTR = f"U.S. dollar closes {hi_low} on Taipei forex market\nTaipei, {date} The U.S. dollar {resultDICT["usd_up_down"][0]} against the Taiwan dollar {weekday}, {tmpSTR} NT${resultDICT["up_down_num"][0]} to close at NT${close}.\n\nTurnover totaled US${turnover_num} during the trading session.\n\nThe greenback opened at the day's high NT${hi} and moved to a low of {low} before the close.\n\n(By xxx)\nEnditem"
                     else:
-                        templateSTR = f"U.S. dollar closes {hi_low} on Taipei forex market\n(Taipei, {date}) The U.S. dollar {resultDICT["usd_up_down"][0]} against the Taiwan dollar {weekday}, {tmpSTR} NT${resultDICT["up_down_num"][0]} to close at NT${close}.\n\nTurnover totaled US${turnover_num} during the trading session.\n\nThe greenback opened at the day's high NT${hi}, and moved to a low of {low} before rebounding.\n\n(By xxx)\nEnditem"
+                        templateSTR = f"U.S. dollar closes {hi_low} on Taipei forex market\nTaipei, {date} The U.S. dollar {resultDICT["usd_up_down"][0]} against the Taiwan dollar {weekday}, {tmpSTR} NT${resultDICT["up_down_num"][0]} to close at NT${close}.\n\nTurnover totaled US${turnover_num} during the trading session.\n\nThe greenback opened at the day's high NT${hi}, and moved to a low of {low} before rebounding.\n\n(By xxx)\nEnditem"
                 else:
-                    templateSTR = f"U.S. dollar closes {hi_low} on Taipei forex market\n(Taipei, {date}) The U.S. dollar {resultDICT["usd_up_down"][0]} against the Taiwan dollar {weekday}, {tmpSTR} NT${resultDICT["up_down_num"][0]} to close at NT${close}.\n\nTurnover totaled US${turnover_num} during the trading session.\n\nThe greenback opened at NT${resultDICT["open"][0]}, and moved between NT${resultDICT["range"][0][0]} and NT${resultDICT["range"][0][1]} before the close.\n\n(By xxx)\nEnditem"
+                    templateSTR = f"U.S. dollar closes {hi_low} on Taipei forex market\nTaipei, {date} The U.S. dollar {resultDICT["usd_up_down"][0]} against the Taiwan dollar {weekday}, {tmpSTR} NT${resultDICT["up_down_num"][0]} to close at NT${close}.\n\nTurnover totaled US${turnover_num} during the trading session.\n\nThe greenback opened at NT${resultDICT["open"][0]}, and moved between NT${resultDICT["range"][0][0]} and NT${resultDICT["range"][0][1]} before the close.\n\n(By xxx)\nEnditem"
             templateSTR += f"\n\n\n原稿：\n{contentSTR}"
 
     except ValueError:
