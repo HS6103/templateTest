@@ -69,22 +69,15 @@ def linebot():
                 
             else:
                 try:
-                    resultDICT = template_main(str(msg))   # Loki語意判斷                    
-                    if resultDICT != {}:
-                        replyLIST = []                        
-                        if resultDICT['response'] != []:
-                            for response in resultDICT['response']:
-                                replyLIST.append(TextSendMessage(response))                                                     # 設定回覆字串                                    
-                            replyLIST.append(TextSendMessage("希望有解答您的疑問~"))
-                            line_bot_api.reply_message(tk,replyLIST)                                                        # 回傳文字訊息
-                        else:
-                            reply = "抱歉，我只是個機器人，沒辦法回答喔"                                                       # 回傳沒有答案時的預設回覆字串                            
+                    resultSTR = template_main(str(msg))   # Loki語意判斷                    
+                    if resultSTR != "":
+                            reply = resultSTR                                                                       # 回傳文字訊息
                     else:
-                            reply = "抱歉，我只是個機器人，沒辦法回答喔"                                                       # 回傳沒有答案時的預設回覆字串
+                            reply = "抱歉，我只是個機器人，沒辦法回答喔"                                               # 回傳沒有答案時的預設回覆字串
                     line_bot_api.reply_message(tk,TextSendMessage(reply))                                           # 回傳訊息
                             
                 except Exception as e:
-                    print("[ERROR] => {}".format(str(e)))
+                    print("[ERROR] => {}".format(str(e.with_traceback)))
                     print(body)                                             # 如果發生錯誤，印出收到的內容                    
                     reply = "抱歉發生一些問題，請再試一次！"                   # 回傳發生錯誤時預設回覆
                     line_bot_api.reply_message(tk,TextSendMessage(reply))   # 回傳訊息
@@ -94,7 +87,7 @@ def linebot():
             line_bot_api.reply_message(tk,TextSendMessage(reply)) # 回傳訊息
             
     except Exception as e:
-        print("[ERROR] => {}".format(str(e)))
+        print("[ERROR] => {}".format(str(e.with_traceback)))
         print(body)                                                                       # 如果發生錯誤，印出收到的內容
         json_data = json.loads(body)                                                      # json 格式化訊息內容
         reply = "抱歉發生一些問題，請再試一次"                                              # 錯誤時回覆
