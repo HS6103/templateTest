@@ -17,19 +17,23 @@ from linebot import LineBotApi, WebhookHandler
 from linebot.exceptions import InvalidSignatureError
 from linebot.models import MessageEvent, TextMessage, TextSendMessage
 
+# logging setup
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s - %(message)s',
+    handlers=[logging.StreamHandler()]
+)
+logger = logging.getLogger(__name__)
 
+# 讀取帳號資訊
 try:
     with open("./templateLOKI/account.info", encoding="utf-8") as f:
         accountDICT = json.load(f)
         username = accountDICT['username']
         
 except Exception as e:
-    print(f"ERROR: {e}")
-
-# 讀取 messages 模板
-def load_message_template(file_path="gpt.json"):
-    with open(file_path, "r", encoding="utf-8") as f:
-        return json.load(f)["messages"]
+    logger.exception(f"Error loading account info")
+    username = None
     
 # Webhook
 app = Flask(__name__)
@@ -38,7 +42,7 @@ app = Flask(__name__)
 
 def linebot():
     
-    body = request.get_data(as_text=True)                # 取得收到的訊息內容
+    body = request.get_data(as_text=True)                    # 取得收到的訊息內容
     try:
         json_data = json.loads(body)                         # json 格式化訊息內容
         access_token = os.environ.get("access_token")        # 輸入 token
@@ -49,50 +53,51 @@ def linebot():
         handler.handle(body, signature)                      # 綁定訊息回傳的相關資訊
         tk = json_data['events'][0]['replyToken']            # 取得回傳訊息的 Token
         type = json_data['events'][0]['message']['type']     # 取得 LINE 收到的訊息類型
-        
+        replySTR = "抱歉發生一些問題，請再試一次！"             # 預設回覆訊息
+
         ############### message handling ###############
         if type=='text':
             msg = json_data['events'][0]['message']['text']  # 取得 LINE 收到的文字訊息
-            print(msg)                                       # 印出內容
-            
-            filterLIST = []
-            splitLIST = ["！", "。", "？", "!", ",", "\n", "；", "\u3000", ";"]
-            refDICT = {}
-            
+            logger.info(f"Received message: {msg}")                                     # 印出內容            
             helloLIST = ["哈囉","嗨","你好","您好","hi","hello"]
             byeLIST = ["掰掰","掰","88","bye bye","bye","再見", "沒有", "拜拜"]
             if any(keyword in msg.lower() for keyword in helloLIST):
-                line_bot_api.reply_message(tk,TextSendMessage("Hi!\n" + "我是 FOCUS TAIWAN 機器人\n請問您今天想問什麼呢?"))                                                        # 回傳文字訊息                
+                replySTR = "Hi!\n" + "我是 FOCUS TAIWAN 機器人\n請問您今天想問什麼呢?"
+                line_bot_api.reply_message(tk,TextSendMessage(replySTR))
+                logger.info(f"Replied with message: {replySTR}")                                                        # 回傳文字訊息                
                 
             elif any(keyword in msg.lower() for keyword in byeLIST):
-                line_bot_api.reply_message(tk,TextSendMessage("掰掰，謝謝您的使用，期待下次為您服務!"))                                                        # 回傳文字訊息                
-                
+                replySTR = "掰掰，謝謝您的使用，期待下次為您服務!"
+                line_bot_api.reply_message(tk,TextSendMessage(replySTR))                                                        # 回傳文字訊息                
+                logger.info(f"Replied with message: {replySTR}")
+
             else:
                 try:
                     resultSTR = template_main(str(msg))   # Loki語意判斷                    
                     if resultSTR != "":
-                            reply = resultSTR                                                                       # 回傳文字訊息
+                            replySTR = resultSTR                                                                       # 回傳文字訊息
                     else:
-                            reply = "抱歉，我只是個機器人，沒辦法回答喔"                                               # 回傳沒有答案時的預設回覆字串
-                    line_bot_api.reply_message(tk,TextSendMessage(reply))                                           # 回傳訊息
-                            
+                            replySTR = "抱歉，我只是個機器人，沒辦法回答喔"                                               # 回傳沒有答案時的預設回覆字串
+                    line_bot_api.reply_message(tk,TextSendMessage(replySTR))                                           # 回傳訊息
+                    logger.info(f"Replied with message: {replySTR}")                                                    # 印出回覆內容
+                    
                 except Exception as e:
-                    print("[ERROR] => {}".format(str(e.with_traceback)))
-                    print(body)                                             # 如果發生錯誤，印出收到的內容                    
-                    reply = "抱歉發生一些問題，請再試一次！"                   # 回傳發生錯誤時預設回覆
-                    line_bot_api.reply_message(tk,TextSendMessage(reply))   # 回傳訊息
-                        
+                    logger.exception("Error processing message")
+                    replySTR = "抱歉發生一些問題，請再試一次！"                   # 回傳發生錯誤時預設回覆
+                    line_bot_api.reply_message(tk,TextSendMessage(replySTR))   # 回傳訊息
+                    logger.info(f"Replied with message: {replySTR}")           # 印出回覆內容
+        
         else:
-            reply = '不是文字，我可是不吃的喔!\n請再試一次~'   # 非文字訊息時回覆
-            line_bot_api.reply_message(tk,TextSendMessage(reply)) # 回傳訊息
-            
-    except Exception as e:
-        print("[ERROR] => {}".format(str(e.with_traceback)))
-        print(body)                                                                       # 如果發生錯誤，印出收到的內容
-        json_data = json.loads(body)                                                      # json 格式化訊息內容
-        reply = "抱歉發生一些問題，請再試一次"                                              # 錯誤時回覆
+            replySTR = '不是文字，我可是不吃的喔，請再試一次！'   # 非文字訊息時回覆
+            line_bot_api.reply_message(tk,TextSendMessage(replySTR)) # 回傳訊息
+            logger.info("Received non-text message.")
+
+    except Exception:
+        logger.exception(f"Error handling request")
+        json_data = json.loads(body)                                                        # json 格式化訊息內容
+        replySTR = "抱歉發生一些問題，請再試一次"                                             # 錯誤時回覆
         if json_data['events'] != []:
-            line_bot_api.push_message(json_data['events'][0]['source']['userId'],TextSendMessage(reply)) # 回傳訊息
+            line_bot_api.push_message(json_data['events'][0]['source']['userId'],TextSendMessage(replySTR)) # 回傳訊息
         
     return 'OK'                                                                       # 驗證 Webhook 使用，不能省略   
 
