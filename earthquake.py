@@ -4,7 +4,7 @@ from bs4 import BeautifulSoup
 from datetime import datetime
 
 
-URL_EN = input("Enter the English CWB earthquake URL: ").strip()
+URL_EN = input("Enter the English CWA earthquake URL: ").strip()
 URL_ZH = URL_EN.replace("/E/E/EQ/", "/C/E/EQ/")
 
 # --------------------
@@ -85,15 +85,20 @@ def get_chinese_epicenter_text(soup):
     return ""
 
 zh_epicenter_text = get_chinese_epicenter_text(soup_zh)
-
 # --------------------
 # Decide "at sea" vs "in xxx"
 # --------------------
 if "近海" in zh_epicenter_text or "海域" in zh_epicenter_text:
-    location_phrase = "at sea"
+    location_tag = "sea"
+
 else:
     # minimal rule as requested
-    location_phrase = "in XXX"
+    location_tag = "land"
+
+epicenterSTR= re.match(r".*of (.+) Hall", info["epicenter"]).group(1).strip()
+# Remove "City" for six special municipalities
+if epicenterSTR in ["Kaohsiung City", "New Taipei City", "Kaohsiung City", "Taichung City", "Tainan City", "Taoyuan City"]:
+    epicenterSTR = epicenterSTR.replace(" City", "")
 
 # --------------------
 # Extract intensity info
@@ -109,7 +114,10 @@ for a in panels:
         continue
 
     area, intensity = text.split("Largest Intensity")
-    area = area.replace("area", "").strip()
+    if area in ["Kaohsiung City area", "New Taipei City area", "Kaohsiung City area", "Taichung City area", "Tainan City area", "Taoyuan City area"]:
+        area = area.replace(" City area", "")
+    else:
+        area = area.replace("area", "").strip()
     intensity = intensity.strip()
 
     if highest_area is None:
@@ -117,22 +125,20 @@ for a in panels:
         highest_intensity = intensity
     elif second_area is None:
         second_area = area
+        if second_area in ["Kaohsiung City", "New Taipei City", "Kaohsiung City", "Taichung City", "Tainan City", "Taoyuan City"]:
+            second_area = second_area.replace(" City", "")
         second_intensity = intensity
         break
 
 # --------------------
 # CNA-style report
 # --------------------
-report = f"""Magnitude {info['magnitude']} earthquake shakes XXX Taiwan
-
-Taipei, {date_str} (CNA) A magnitude {info['magnitude']} earthquake struck {location_phrase} off XXX Taiwan at {time_str} {weekday}, according to the Central Weather Administration (CWA).
-
-There were no immediate reports of damage or injuries.
-
-The epicenter of the temblor was located {location_phrase}, about {info['epicenter']}, at a depth of {info['depth']}, according to the administration.
-
-The earthquake's intensity was highest in {highest_area}, where it measured {highest_intensity} on Taiwan's 7-tier intensity scale.
-"""
+if location_tag == "sea":
+    report = f"""Magnitude {info['magnitude']} earthquake shakes XXX Taiwan\n\nTaipei, {date_str} (CNA) A magnitude {info['magnitude']} earthquake struck off the coast in XXX Taiwan's {epicenterSTR} at {time_str} {weekday}, according to the Central Weather Administration (CWA).\n\nThere were no immediate reports of damage or injuries.\n\nThe epicenter of the temblor was located at sea, about {info['epicenter']}, at a depth of {info['depth']}, according to the administration.\n\nThe earthquake's intensity was highest in {highest_area}, where it measured {highest_intensity} on Taiwan's 7-tier intensity scale.
+    """
+else:
+    report = f"""Magnitude {info['magnitude']} earthquake shakes XXX Taiwan\n\nTaipei, {date_str} (CNA) A magnitude {info['magnitude']} earthquake struck {epicenterSTR} in XXX Taiwan at {time_str} {weekday}, according to the Central Weather Administration (CWA).\n\nThere were no immediate reports of damage or injuries.\n\nThe epicenter of the temblor was located in {epicenterSTR}, about {info['epicenter']}, at a depth of {info['depth']}, according to the administration.\n\nThe earthquake's intensity was highest in {highest_area}, where it measured {highest_intensity} on Taiwan's 7-tier intensity scale.
+    """
 
 if second_area:
     report += f"\nThe quake also measured an intensity of {second_intensity} in {second_area}, the CWA said."
