@@ -81,24 +81,92 @@ weekday = dt.strftime("%A")
 def get_chinese_epicenter_text(soup):
     for li in soup.select("ul.quake_info li"):
         if li.find("i", class_="fa-map-marker"):
-            return li.get_text(strip=True)
+            epicenter_raw = li.get_text(strip=True)
+            # Determine if epicenter is at sea or on land
+            if "近海" in epicenter_raw or "海域" in epicenter_raw:
+                location_tag = "sea"
+            else:
+                location_tag = "land"
+            epicenterSTR= re.match(r".*of (.+) Hall", info["epicenter"]).group(1).strip()
+            # Remove "City" for six special municipalities
+            if epicenterSTR in ["Kaohsiung City", "New Taipei City", "Kaohsiung City", "Taichung City", "Tainan City", "Taoyuan City"]:
+                epicenterSTR = epicenterSTR.replace(" City", "")
+
+            return epicenterSTR, location_tag
     return ""
 
 zh_epicenter_text = get_chinese_epicenter_text(soup_zh)
-# --------------------
-# Decide "at sea" vs "in xxx"
-# --------------------
-if "近海" in zh_epicenter_text or "海域" in zh_epicenter_text:
-    location_tag = "sea"
+epicenterSTR = zh_epicenter_text[0] if zh_epicenter_text else ""
+location_tag = zh_epicenter_text[1] if zh_epicenter_text else ""
 
-else:
-    # minimal rule as requested
-    location_tag = "land"
+# --------------------
+# Region mappings (CNA-style)
+# --------------------
+EASTERN_COUNTIES = {
+    "Hualien County",
+}
 
-epicenterSTR= re.match(r".*of (.+) Hall", info["epicenter"]).group(1).strip()
-# Remove "City" for six special municipalities
-if epicenterSTR in ["Kaohsiung City", "New Taipei City", "Kaohsiung City", "Taichung City", "Tainan City", "Taoyuan City"]:
-    epicenterSTR = epicenterSTR.replace(" City", "")
+SOUTHERN_COUNTIES = {
+    "Kaohsiung",
+    "Tainan",
+    "Pingtung County",
+}
+
+NORTHERN_COUNTIES = {
+    "Taipei",
+    "New Taipei",
+    "Keelung City",
+    "Taoyuan",
+    "Hsinchu",
+    "Hsinchu County",
+}
+
+CENTRAL_COUNTIES = {
+    "Taichung",
+    "Changhua County",
+    "Nantou County",
+    "Yunlin County",
+    "Miaoli County",
+}
+
+SOUTHEASTERN_COUNTIES = {
+    "Taitung County",
+}
+
+NORTHEASTERN_COUNTIES = {
+    "Yilan County",
+}
+
+ALL_COUNTIES = (
+    EASTERN_COUNTIES
+    | SOUTHERN_COUNTIES
+    | NORTHERN_COUNTIES
+    | CENTRAL_COUNTIES
+    | SOUTHEASTERN_COUNTIES
+    | NORTHEASTERN_COUNTIES
+)
+
+# --------------------
+# Map county → region
+# --------------------
+
+def county_to_region(county: str | None) -> str | None:
+    region = None
+    if county in EASTERN_COUNTIES:
+        region = "eastern Taiwan"
+    if county in SOUTHERN_COUNTIES:
+        region = "southern Taiwan"
+    if county in NORTHERN_COUNTIES:
+        region = "northern Taiwan"
+    if county in CENTRAL_COUNTIES:
+        region = "central Taiwan"
+    if county in SOUTHEASTERN_COUNTIES:
+        region = "southeastern Taiwan"
+    if county in NORTHEASTERN_COUNTIES:
+        region = "northeastern Taiwan"
+    return region
+
+region = county_to_region(zh_epicenter_text[0]) if zh_epicenter_text else None
 
 # --------------------
 # Extract intensity info
@@ -133,16 +201,19 @@ for a in panels:
 # --------------------
 # CNA-style report
 # --------------------
-if location_tag == "sea":
-    report = f"""Magnitude {info['magnitude']} earthquake shakes XXX Taiwan\n\nTaipei, {date_str} (CNA) A magnitude {info['magnitude']} earthquake struck off the coast in XXX Taiwan's {epicenterSTR} at {time_str} {weekday}, according to the Central Weather Administration (CWA).\n\nThere were no immediate reports of damage or injuries.\n\nThe epicenter of the temblor was located at sea, about {info['epicenter']}, at a depth of {info['depth']}, according to the administration.\n\nThe earthquake's intensity was highest in {highest_area}, where it measured {highest_intensity} on Taiwan's 7-tier intensity scale.
-    """
+if region:
+    if location_tag == "sea":
+        report = f"""Magnitude {info['magnitude']} earthquake shakes {region}\n\nTaipei, {date_str} (CNA) A magnitude {info['magnitude']} earthquake struck off the coast of {region}'s {epicenterSTR} at {time_str} {weekday}, according to the Central Weather Administration (CWA).\n\nThere were no immediate reports of damage or injuries.\n\nThe epicenter of the temblor was located at sea, about {info['epicenter']}, at a depth of {info['depth']}, according to the administration.\n\nThe earthquake's intensity was highest in {highest_area}, where it measured {highest_intensity} on Taiwan's 7-tier intensity scale.
+        """
+    else:
+        report = f"""Magnitude {info['magnitude']} earthquake shakes {region}\n\nTaipei, {date_str} (CNA) A magnitude {info['magnitude']} earthquake struck {epicenterSTR} in {region} at {time_str} {weekday}, according to the Central Weather Administration (CWA).\n\nThere were no immediate reports of damage or injuries.\n\nThe epicenter of the temblor was located in {epicenterSTR}, about {info['epicenter']}, at a depth of {info['depth']}, according to the administration.\n\nThe earthquake's intensity was highest in {highest_area}, where it measured {highest_intensity} on Taiwan's 7-tier intensity scale.
+        """
+
+    if second_area:
+        report += f"\nThe quake also measured an intensity of {second_intensity} in {second_area}, the CWA said."
+
+    report += "\n\n(By NAME)\nEnditem"
+
+    print(report)
 else:
-    report = f"""Magnitude {info['magnitude']} earthquake shakes XXX Taiwan\n\nTaipei, {date_str} (CNA) A magnitude {info['magnitude']} earthquake struck {epicenterSTR} in XXX Taiwan at {time_str} {weekday}, according to the Central Weather Administration (CWA).\n\nThere were no immediate reports of damage or injuries.\n\nThe epicenter of the temblor was located in {epicenterSTR}, about {info['epicenter']}, at a depth of {info['depth']}, according to the administration.\n\nThe earthquake's intensity was highest in {highest_area}, where it measured {highest_intensity} on Taiwan's 7-tier intensity scale.
-    """
-
-if second_area:
-    report += f"\nThe quake also measured an intensity of {second_intensity} in {second_area}, the CWA said."
-
-report += "\n\n(By NAME)\nEnditem"
-
-print(report)
+    print("Epicenter not in target regions; no report generated.")
